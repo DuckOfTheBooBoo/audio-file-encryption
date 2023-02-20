@@ -1,10 +1,38 @@
 from os.path import join, isfile
-from os import environ
+from os import environ, listdir
+from io import BytesIO
+from cryptography.fernet import Fernet, InvalidToken
 
+INPUT_DIR = "input"
+OUTPUT_DIR = "output"
+
+# Get filelist
+files = [file for file in listdir(OUTPUT_DIR) if file.endswith(".enc")]
+
+# Get encryption key from environment variable and encode it
+try:
+    env_key = environ["en_key"].encode("utf-8")
+except KeyError:
+    print("en_key doesn't exist in your environment.")
+key = Fernet(env_key)
 
 
 def decrypt():
-    pass
+    for file in files:
+        
+        try:    
+            audiofile = join(OUTPUT_DIR, file)
+            
+            with open(audiofile, 'rb') as infile:
+                encrypted_data = infile.read()
+                
+                decrypted_data = key.decrypt(encrypted_data)
+            
+            return decrypted_data
+        
+        except InvalidToken:
+            print("The key does not match with the key that used when encrypting the file, thus cannot be used.")
+        
 
 if __name__ == "__main__":
-    pass
+    decrypt()

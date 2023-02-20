@@ -1,6 +1,5 @@
 from os.path import join, isfile, isdir
 from os import remove, rename, environ, listdir, mkdir
-from io import BytesIO
 from cryptography.fernet import Fernet
 import uuid
 
@@ -12,7 +11,11 @@ AUDIO_FILE_EX = (".mp3", ".wav", ".ogg")
 files = [file for file in listdir(INPUT_DIR) if file.endswith(AUDIO_FILE_EX)]
 
 # Get encryption key from environment variable and encode it
-env_key = environ.get("en_key").encode("utf-8")
+try:
+    env_key = environ["en_key"].encode("utf-8")
+except KeyError:
+    print("en_key doesn't exist in your environment.")
+    
 key = Fernet(env_key)
 
 def encrypt():
