@@ -1,5 +1,5 @@
-from os.path import join, isfile
-from os import remove, rename, environ, listdir
+from os.path import join, isfile, isdir
+from os import remove, rename, environ, listdir, mkdir
 from io import BytesIO
 
 INPUT_DIR = "input"
