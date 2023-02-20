@@ -23,7 +23,7 @@ def encrypt():
             data = infile.read()
             
         encrypted_data = key.encrypt(data)
-        filename = str(uuid.uuid4())
+        filename = str(uuid.uuid4()) + ".enc"
         
         with open(join(OUTPUT_DIR, filename), 'wb') as outfile:
             print(f"out -> {join(OUTPUT_DIR, filename)}")
