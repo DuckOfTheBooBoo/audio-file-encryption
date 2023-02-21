@@ -6,9 +6,6 @@ from cryptography.fernet import Fernet, InvalidToken
 
 INPUT_DIR = "input"
 OUTPUT_DIR = "output"
-AUDIO_COVER_ART = "APIC:cover"
-AUDIO_TITLE = "TIT2"
-AUDIO_ARTIST = "TPE1"
 
 # Get filelist
 files = [file for file in listdir(OUTPUT_DIR) if file.endswith(".enc")]
@@ -21,27 +18,26 @@ except KeyError:
 key = Fernet(env_key)
 
 
-def decrypt():
-    for file in files:
+def decrypt(file):
         
-        try:    
-            audiofile = join(OUTPUT_DIR, file)
+    try:    
+        audiofile = join(OUTPUT_DIR, file)
+        
+        with open(audiofile, 'rb') as infile:
+            encrypted_data = infile.read()
             
-            with open(audiofile, 'rb') as infile:
-                encrypted_data = infile.read()
-                
-                decrypted_data = key.decrypt(encrypted_data)
+            decrypted_data = key.decrypt(encrypted_data)
 
-                data = BytesIO(decrypted_data)
-                
-                audio = ID3(data)
+            data = BytesIO(decrypted_data)
             
-            return (data, audio)
-                
-        except InvalidToken:
-            print("The key does not match with the key that used when encrypting the file, thus cannot be used.")
+            audio = ID3(data)
+            
+        return (data, audio)
+            
+    except InvalidToken:
+        print("The key does not match with the key that used when encrypting the file, thus cannot be used.")
 
-            return None
+        return None
 
 if __name__ == "__main__":
     decrypt()
