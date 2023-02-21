@@ -13,7 +13,6 @@ def play_audio(file_path):
         playsound(file_path, False)
         for i in range(length):
             progress.update(task, advance=1)
-        playsound.stop()
 
 if __name__ == "__main__":
     file_path = r"input\NewJeans - OMG.wav"

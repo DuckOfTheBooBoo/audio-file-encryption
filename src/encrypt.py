@@ -19,6 +19,9 @@ except KeyError:
 key = Fernet(env_key)
 
 def encrypt():
+    """
+    Encrypt all file within input directory.
+    """
     for file in files:
         
         audiofile = join(INPUT_DIR, file)
