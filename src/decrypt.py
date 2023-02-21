@@ -7,8 +7,6 @@ from cryptography.fernet import Fernet, InvalidToken
 INPUT_DIR = "input"
 OUTPUT_DIR = "output"
 
-# Get filelist
-files = [file for file in listdir(OUTPUT_DIR) if file.endswith(".enc")]
 
 # Get encryption key from environment variable and encode it
 try:
