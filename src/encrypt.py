@@ -3,8 +3,8 @@ from os import remove, rename, environ, listdir, mkdir
 from cryptography.fernet import Fernet
 import uuid
 
-INPUT_DIR = "input"
-OUTPUT_DIR = "output"
+INPUT_DIR = join("..","input")
+OUTPUT_DIR = join("..","output")
 AUDIO_FILE_EX = (".mp3", ".wav", ".ogg")
 
 # Get filelist

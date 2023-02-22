@@ -41,10 +41,11 @@ def play_audio(file_path):
     #         progress.update(task, advance=1)
 
 def blessed_file_selector(directory):
+    files = [f for f in os.listdir(directory) if f.endswith(".enc")]
     term = blessed.Terminal()
+    
     with term.fullscreen(), term.cbreak():
         current_selection = 0
-        files = [f for f in os.listdir(directory) if f.endswith(".enc")]
         max_selection = len(files) - 1
         
         while True:
