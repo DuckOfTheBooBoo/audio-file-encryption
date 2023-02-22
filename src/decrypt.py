@@ -17,7 +17,9 @@ key = Fernet(env_key)
 
 
 def decrypt(file):
-        
+    """
+    Decrypt a file that has been encrypted by encrypt.py
+    """
     try:    
         audiofile = file
         
@@ -28,9 +30,9 @@ def decrypt(file):
 
             data = BytesIO(decrypted_data)
             
-            audio = ID3(data)
+            audio_data = ID3(data)
             
-        return (data, audio)
+        return (data, audio_data)
             
     except InvalidToken:
         print("The key does not match with the key that used when encrypting the file, thus cannot be used.")
