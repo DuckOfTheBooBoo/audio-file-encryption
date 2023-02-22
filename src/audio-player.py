@@ -1,8 +1,11 @@
 from rich.progress import Progress, BarColumn, TimeRemainingColumn
 from rich.traceback import install
 import os, blessed
-import playsound
+from pydub import AudioSegment
+from pydub.playback import play
+from decrypt import decrypt
 
+# Install rich.traceback
 install()
 
 INPUT_DIR = os.path.join("..", "input")
@@ -21,13 +24,21 @@ class AudioFile:
 
 def play_audio(file_path):
     
-    length = playsound.playsound(file_path, True) // 1000
+    # TODO: Use mutagen to know the length of audio
+    # length = playsound.playsound(file_path, True) // 1000
     
-    with Progress("[progress.description]{task.description}", BarColumn(), "{task.completed}/{task.total}", TimeRemainingColumn()) as progress:
-        task = progress.add_task("Playing audio...", total=length)
-        playsound.playsound(file_path, False)
-        for i in range(length):
-            progress.update(task, advance=1)
+    # TODO: Fix PermissionDenied
+    audio = AudioSegment.from_file_using_temporary_files(file_path)
+    
+    # TODO: Put this into a separate thread
+    play(audio)
+    # with Progress("[progress.description]{task.description}", BarColumn(), "{task.completed}/{task.total}", TimeRemainingColumn()) as progress:
+    #     task = progress.add_task("Playing audio...", total=length)
+        
+        
+        
+    #     for i in range(length):
+    #         progress.update(task, advance=1)
 
 def blessed_file_selector(directory):
     term = blessed.Terminal()
@@ -66,14 +77,13 @@ def select_file():
     file_path = blessed_file_selector(OUTPUT_DIR)
     
     if file_path is not None:
-        print("Selected file:", file_path)
+        print("Selected file:", os.path.basename(file_path))
+        
+        decrypted_data = decrypt(file_path)
+        play_audio(decrypted_data[0])
         
     else:
         print("No file selected.")
-
-    
-    
-    
 
 if __name__ == "__main__":
     select_file()

@@ -19,7 +19,7 @@ key = Fernet(env_key)
 def decrypt(file):
         
     try:    
-        audiofile = join(OUTPUT_DIR, file)
+        audiofile = file
         
         with open(audiofile, 'rb') as infile:
             encrypted_data = infile.read()
