@@ -1,5 +1,7 @@
 from rich.progress import Progress, BarColumn, TimeRemainingColumn
 from rich.traceback import install
+from rich.console import Console
+from time import sleep
 from os.path import join, basename
 from decrypt import decrypt
 import os,blessed 
@@ -11,6 +13,7 @@ import pygame
 # Install rich.traceback
 install()
 
+console = Console()
 
 INPUT_DIR = join("..", "input")
 OUTPUT_DIR = join("..", "output")
@@ -18,6 +21,7 @@ AUDIO_COVER_ART = "APIC:cover"
 AUDIO_TITLE = "TIT2"
 AUDIO_ARTIST = "TPE1"
 
+term = blessed.Terminal()
 
 class AudioFile:
     def __init__(self, path, ):
@@ -27,31 +31,31 @@ class AudioFile:
     def __repr__(self) -> str:
         return self.filename
 
-def play_audio(file_path):
-    # TODO: Use mutagen to know the length of audio
-    # length = playsound.playsound(file_path, True) // 1000
+def play_audio(input_stream):
+    audio_metadata = input_stream[1]
     
     pygame.mixer.init()
     
-    audio = pygame.mixer.Sound(file_path)
+    audio = pygame.mixer.Sound(input_stream[0])
     audio.set_volume(1.0)
     audio_stream = audio.play()
     
-    while audio_stream.get_busy():
-        pygame.time.wait(100)        
+    length = int(audio.get_length())
     
+    song_title = audio_metadata[AUDIO_TITLE]
+    song_artist = audio_metadata[AUDIO_ARTIST]
     
-    # with Progress("[progress.description]{task.description}", BarColumn(), "{task.completed}/{task.total}", TimeRemainingColumn()) as progress:
-    #     task = progress.add_task("Playing audio...", total=length)
-        
-        
-        
-    #     for i in range(length):
-    #         progress.update(task, advance=1)
+    with term.fullscreen():
+        with Progress("[progress.description]{task.description}", f"{song_artist} - {song_title}", BarColumn(), TimeRemainingColumn()) as progress:
+            
+            task = progress.add_task("Playing", total=length)
+            
+            for i in range(length):
+                progress.update(task, advance=1)
+                sleep(1)
 
 def blessed_file_selector(directory):
     files = [f for f in os.listdir(directory) if f.endswith(".enc")]
-    term = blessed.Terminal()
     
     with term.fullscreen(), term.cbreak():
         current_selection = 0
@@ -90,7 +94,7 @@ def select_file():
         print("Selected file:", os.path.basename(file_path))
         
         decrypted_data = decrypt(file_path)
-        play_audio(decrypted_data[0])
+        play_audio(decrypted_data)
         
     else:
         print("No file selected.")

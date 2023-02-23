@@ -4,6 +4,7 @@
 *.ogg
 *.code-workspace
 *.ps1
+*.json
 *.enc
 *.pyo
 *.pyc
