@@ -23,14 +23,6 @@ AUDIO_ARTIST = "TPE1"
 
 term = blessed.Terminal()
 
-class AudioFile:
-    def __init__(self, path, ):
-        self.path = path
-        self.filename = basename(path)
-    
-    def __repr__(self) -> str:
-        return self.filename
-
 def play_audio(input_stream):
     audio_metadata = input_stream[1]
     
