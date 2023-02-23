@@ -1,37 +1,46 @@
 from rich.progress import Progress, BarColumn, TimeRemainingColumn
 from rich.traceback import install
-import os, blessed
-from pydub import AudioSegment
-from pydub.playback import play
+from os.path import join, basename
 from decrypt import decrypt
+import os,blessed 
+
+# Remove pygame welcome message
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
 
 # Install rich.traceback
 install()
 
-INPUT_DIR = os.path.join("..", "input")
-OUTPUT_DIR = os.path.join("..", "output")
+
+INPUT_DIR = join("..", "input")
+OUTPUT_DIR = join("..", "output")
 AUDIO_COVER_ART = "APIC:cover"
 AUDIO_TITLE = "TIT2"
 AUDIO_ARTIST = "TPE1"
 
+
 class AudioFile:
     def __init__(self, path, ):
         self.path = path
-        self.filename = os.path.basename(path)
+        self.filename = basename(path)
     
     def __repr__(self) -> str:
         return self.filename
 
 def play_audio(file_path):
-    
     # TODO: Use mutagen to know the length of audio
     # length = playsound.playsound(file_path, True) // 1000
     
-    # TODO: Fix PermissionDenied
-    audio = AudioSegment.from_file_using_temporary_files(file_path)
+    pygame.mixer.init()
     
-    # TODO: Put this into a separate thread
-    play(audio)
+    audio = pygame.mixer.Sound(file_path)
+    audio.set_volume(1.0)
+    audio_stream = audio.play()
+    
+    while audio_stream.get_busy():
+        pygame.time.wait(100)        
+    
+    
     # with Progress("[progress.description]{task.description}", BarColumn(), "{task.completed}/{task.total}", TimeRemainingColumn()) as progress:
     #     task = progress.add_task("Playing audio...", total=length)
         
@@ -68,7 +77,7 @@ def blessed_file_selector(directory):
                     current_selection = min(current_selection + 1, max_selection)
                     
                 elif key.name == "KEY_ENTER":
-                    return os.path.join(directory, files[current_selection])
+                    return join(directory, files[current_selection])
                 
             elif key == "q":
                 return None
