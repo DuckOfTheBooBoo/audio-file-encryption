@@ -1,4 +1,4 @@
-from rich.progress import Progress, BarColumn, TimeRemainingColumn
+from rich.progress import Progress, BarColumn, TimeRemainingColumn, TimeElapsedColumn
 from rich.traceback import install
 from rich.console import Console
 from time import sleep
@@ -38,13 +38,23 @@ def play_audio(input_stream):
     song_artist = audio_metadata[AUDIO_ARTIST]
     
     with term.fullscreen():
-        with Progress("[progress.description]{task.description}", f"{song_artist} - {song_title}", BarColumn(), TimeRemainingColumn()) as progress:
+        
+        width = term.width // 2
+        height = term.height // 2
+
+        print(term.move_x(width) + term.move_y(height))
+        with Progress("[progress.description]{task.description}", f"{song_artist} - {song_title}", BarColumn(), TimeElapsedColumn(), "/", TimeRemainingColumn()) as progress:
             
             task = progress.add_task("Playing", total=length)
             
-            for i in range(length):
+            while audio_stream.get_busy():
                 progress.update(task, advance=1)
                 sleep(1)
+        
+        # TODO: Implement a seeking function
+        
+        
+        
 
 def blessed_file_selector(directory):
     files = [f for f in os.listdir(directory) if f.endswith(".enc")]
